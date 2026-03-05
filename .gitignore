@@ -1,1 +1,19 @@
+# Maven build output
 target/
+
+# JPro
+RUNNING_PID
+
+# VSCode
+.vscode/
+
+# Mac system files
+.DS_Store
+
+# Java
+*.class
+*.jar
+*.war
+
+# Logs
+*.log
