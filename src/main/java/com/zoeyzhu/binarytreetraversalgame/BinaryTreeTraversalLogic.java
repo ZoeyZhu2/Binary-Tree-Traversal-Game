@@ -44,7 +44,6 @@ public class BinaryTreeTraversalLogic {
 
     }
 
-    //inorder traversal still wonky. preorder and postorder should be okay.
     private void inorderTraversal(BinaryTreeNode<Integer> node) {
         if (node == null) {
             return;
