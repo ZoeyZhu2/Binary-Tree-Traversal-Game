@@ -3,7 +3,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.HashSet;
 
-//generates a random binary tree with random integer values for now
+//generates a BST with random integer values
 public class BinaryTreeGenerator {
     private BinaryTreeNode<Integer> root;
     private Random r = new Random();
