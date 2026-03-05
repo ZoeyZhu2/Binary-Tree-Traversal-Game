@@ -9,6 +9,20 @@
         <maven.compiler.target>24</maven.compiler.target>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>jpro</id>
+            <url>https://sandec.jfrog.io/artifactory/repo</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>jpro</id>
+            <url>https://sandec.jfrog.io/artifactory/repo</url>
+        </pluginRepository>
+    </pluginRepositories>
+
     <dependencies>
         <dependency>
             <groupId>org.openjfx</groupId>
@@ -25,6 +39,11 @@
             <artifactId>javafx-fxml</artifactId>
             <version>24.0.2</version>
         </dependency>
+        <dependency>
+            <groupId>one.jpro</groupId>
+            <artifactId>jpro-webapi</artifactId>
+            <version>2025.3.3</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -35,6 +54,14 @@
                 <version>0.0.8</version>
                 <configuration>
                     <mainClass>com.zoeyzhu.binarytreetraversalgame.Main</mainClass>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>one.jpro</groupId>
+                <artifactId>jpro-maven-plugin</artifactId>
+                <version>2025.3.3</version>
+                <configuration>
+                    <mainClassName>com.zoeyzhu.binarytreetraversalgame.Main</mainClassName>
                 </configuration>
             </plugin>
         </plugins>
