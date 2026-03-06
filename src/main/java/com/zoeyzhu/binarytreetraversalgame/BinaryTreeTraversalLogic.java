@@ -1,11 +1,11 @@
 package com.zoeyzhu.binarytreetraversalgame;
 import java.util.ArrayList;
 
-public class BinaryTreeTraversalLogic {
-    private ArrayList<BinaryTreeNode<Integer>> order = new ArrayList<>();
+public class BinaryTreeTraversalLogic<T> {
+    private ArrayList<BinaryTreeNode<T>> order = new ArrayList<>();
     private int currentIndex = 0;
 
-    public BinaryTreeTraversalLogic(BinaryTreeNode<Integer> root, String mode) {
+    public BinaryTreeTraversalLogic(BinaryTreeNode<T> root, String mode) {
         if (mode.equals("preorder")) {
             preorderTraversal(root);
         }
@@ -17,7 +17,7 @@ public class BinaryTreeTraversalLogic {
         }
     }
 
-    private void preorderTraversal(BinaryTreeNode<Integer> node) {
+    private void preorderTraversal(BinaryTreeNode<T> node) {
         if (node == null) {
             return;
         }
@@ -30,7 +30,7 @@ public class BinaryTreeTraversalLogic {
         }
     }
 
-    private void postorderTraversal(BinaryTreeNode<Integer> node) {
+    private void postorderTraversal(BinaryTreeNode<T> node) {
         if (node == null) {
             return;
         }
@@ -44,7 +44,7 @@ public class BinaryTreeTraversalLogic {
 
     }
 
-    private void inorderTraversal(BinaryTreeNode<Integer> node) {
+    private void inorderTraversal(BinaryTreeNode<T> node) {
         if (node == null) {
             return;
         }
@@ -57,7 +57,7 @@ public class BinaryTreeTraversalLogic {
         }
     }
 
-    public boolean checkNext(BinaryTreeNode<Integer> node) {
+    public boolean checkNext(BinaryTreeNode<T> node) {
         if (!isComplete()) {
             if (order.get(currentIndex) == node) {
                 currentIndex++;
@@ -69,5 +69,14 @@ public class BinaryTreeTraversalLogic {
 
     public boolean isComplete() {
         return (currentIndex >= order.size());
+    }
+
+    public String getOrderString() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < order.size(); i++) {
+            sb.append(order.get(i).getData());
+            if (i < order.size() - 1) sb.append(", ");
+        }
+        return sb.toString();
     }
 }
