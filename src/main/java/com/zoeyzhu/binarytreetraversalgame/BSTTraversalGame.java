@@ -9,8 +9,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 
 
-public class BinaryTreeTraversalGame {
-    private BinaryTreeGenerator generator;
+public class BSTTraversalGame {
+    private BSTGenerator generator;
     private BinaryTreeNode<Integer> root;
     private BinaryTreeDrawer drawer;
     private BinaryTreeTraversalLogic checker;
@@ -23,9 +23,9 @@ public class BinaryTreeTraversalGame {
     private Button postorderBtn;
 
 
-    public BinaryTreeTraversalGame(Stage stage) {
+    public BSTTraversalGame(Stage stage) {
         this.stage = stage;
-        generator = new BinaryTreeGenerator();
+        generator = new BSTGenerator();
         root = generator.getRoot();
         drawer = new BinaryTreeDrawer(root);
         checker = new BinaryTreeTraversalLogic(root, currentMode);
@@ -54,7 +54,7 @@ public class BinaryTreeTraversalGame {
     }
  
     private void resetGame() {
-        generator = new BinaryTreeGenerator();
+        generator = new BSTGenerator();
         root = generator.getRoot();
         drawer = new BinaryTreeDrawer(root);
         checker = new BinaryTreeTraversalLogic(root, currentMode);

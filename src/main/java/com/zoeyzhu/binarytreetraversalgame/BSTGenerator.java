@@ -4,11 +4,11 @@ import java.util.Set;
 import java.util.HashSet;
 
 //generates a BST with random integer values
-public class BinaryTreeGenerator {
+public class BSTGenerator {
     private BinaryTreeNode<Integer> root;
     private Random r = new Random();
 
-    public BinaryTreeGenerator() {
+    public BSTGenerator() {
         //number of nodes:
         int n = r.nextInt(3) + 19;
         Set<Integer> used = new HashSet<>();
