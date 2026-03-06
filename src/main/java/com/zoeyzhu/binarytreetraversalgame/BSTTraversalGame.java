@@ -67,14 +67,15 @@ public class BSTTraversalGame {
         inorderBtn = new Button("Inorder");
         postorderBtn = new Button("Postorder");
         Button resetBtn = new Button("Reset");
+        Button menuBtn = new Button("Main Menu");
 
         preorderBtn.setOnAction(e -> switchMode("preorder"));
         inorderBtn.setOnAction(e -> switchMode("inorder"));
         postorderBtn.setOnAction(e -> switchMode("postorder"));
         resetBtn.setOnAction(e -> resetGame());
+        menuBtn.setOnAction(e -> new Main().start(stage));
 
-        HBox buttons = new HBox(10, preorderBtn, inorderBtn, postorderBtn, resetBtn);
-
+        HBox buttons = new HBox(10, preorderBtn, inorderBtn, postorderBtn, resetBtn, menuBtn);
         
         ScrollPane scrollPane = new ScrollPane(drawer);
         scrollPane.setPrefSize(1200, 700);

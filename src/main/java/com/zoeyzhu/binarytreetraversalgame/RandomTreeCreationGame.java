@@ -63,7 +63,10 @@ public class RandomTreeCreationGame {
         clearBtn.setOnAction(e -> reset());
         resetBtn.setOnAction(e -> startGame());
 
-        HBox buttons = new HBox(10, verifyBtn, clearBtn, resetBtn);
+        Button menuBtn = new Button("Main Menu");
+        menuBtn.setOnAction(e -> new Main().start(stage));
+
+        HBox buttons = new HBox(10, verifyBtn, clearBtn, resetBtn, menuBtn);
         VBox layout = new VBox(10, traversalLabel, feedbackLabel, buttons, scrollPane);
         stage.setScene(new Scene(layout, 1200, 800));
         stage.show();
