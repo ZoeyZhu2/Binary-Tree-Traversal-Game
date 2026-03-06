@@ -107,4 +107,8 @@ public class RandomBinaryTreeGenerator {
                 return "";
         }
     }
+
+    public BinaryTreeNode<String> getRoot() {
+        return root;
+    }
 }
