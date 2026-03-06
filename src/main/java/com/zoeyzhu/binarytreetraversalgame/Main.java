@@ -6,7 +6,8 @@ import javafx.stage.Stage;
 public class Main extends Application {
     @Override
     public void start(Stage stage) {
-        new BSTTraversalGame(stage);
+        // new BSTTraversalGame(stage);
+        new RandomTreeCreationGame(stage);
     }
 
     public static void main(String[] args) {
