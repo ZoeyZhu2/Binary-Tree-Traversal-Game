@@ -13,7 +13,7 @@ public class BSTTraversalGame {
     private BSTGenerator generator;
     private BinaryTreeNode<Integer> root;
     private BinaryTreeDrawer drawer;
-    private BinaryTreeTraversalLogic checker;
+    private BinaryTreeTraversalLogic<Integer> checker;
     private Label feedbackLabel;
     private Stage stage;
     private String currentMode = "preorder";
@@ -28,7 +28,7 @@ public class BSTTraversalGame {
         generator = new BSTGenerator();
         root = generator.getRoot();
         drawer = new BinaryTreeDrawer(root);
-        checker = new BinaryTreeTraversalLogic(root, currentMode);
+        checker = new BinaryTreeTraversalLogic<Integer>(root, currentMode);
 
         feedbackLabel = new Label("Click nodes in " + currentMode + "!");
         setupClickListener();
@@ -37,7 +37,7 @@ public class BSTTraversalGame {
 
     private void switchMode(String mode) {
         currentMode = mode;
-        checker = new BinaryTreeTraversalLogic(root, mode);
+        checker = new BinaryTreeTraversalLogic<Integer>(root, mode);
         setupClickListener(); // re-register with new checker
         drawer.resetHighlights();
         feedbackLabel.setText("Click nodes in " + mode + "!");
@@ -57,7 +57,7 @@ public class BSTTraversalGame {
         generator = new BSTGenerator();
         root = generator.getRoot();
         drawer = new BinaryTreeDrawer(root);
-        checker = new BinaryTreeTraversalLogic(root, currentMode);
+        checker = new BinaryTreeTraversalLogic<Integer>(root, currentMode);
         setupClickListener();
         buildLayout();
     }
