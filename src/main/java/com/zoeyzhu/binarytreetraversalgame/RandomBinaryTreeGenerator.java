@@ -8,13 +8,15 @@ import java.util.ArrayList;
 public class RandomBinaryTreeGenerator {
     private BinaryTreeNode<String> root;
     private Random r = new Random();
-    private static final int TOTAL_NODES = 26;
+    // private static final int TOTAL_NODES = 26; //all trees will have 26 nodes
+    private int totalNodes;
 
     public RandomBinaryTreeGenerator() {
+        totalNodes = r.nextInt(17) + 10; //making trees have 10-26 notes
         int generated = 0;
         Set<String> used = new HashSet<>();
         ArrayList<BinaryTreeNode<String>> availableNodes = new ArrayList<>();
-        while (generated < TOTAL_NODES) {
+        while (generated < totalNodes) {
             String nextLetter = generateLetter();
             if (!used.contains(nextLetter)) {
                 used.add(nextLetter);
@@ -47,7 +49,7 @@ public class RandomBinaryTreeGenerator {
     }
 
     private String generateLetter() {
-        int numLetter = r.nextInt(TOTAL_NODES) + 1;
+        int numLetter = r.nextInt(totalNodes) + 1;
         switch (numLetter) {
             case 1:
                 return "A";
