@@ -1,3 +1,5 @@
+//This class is where all the elemenets in the Random Tree Creation Game are brought together
+
 package com.zoeyzhu.binarytreetraversalgame;
 
 import javafx.scene.Scene;
@@ -58,15 +60,17 @@ public class RandomTreeCreationGame {
         Button verifyBtn = new Button("Verify");
         Button clearBtn = new Button("Clear");
         Button resetBtn = new Button("New Game");
+        Button checkBtn = new Button("Check So Far");
 
         verifyBtn.setOnAction(e -> verify());
         clearBtn.setOnAction(e -> reset());
         resetBtn.setOnAction(e -> startGame());
+        checkBtn.setOnAction(e -> checkSoFar());
 
         Button menuBtn = new Button("Main Menu");
         menuBtn.setOnAction(e -> new Main().start(stage));
 
-        HBox buttons = new HBox(10, verifyBtn, clearBtn, resetBtn, menuBtn);
+        HBox buttons = new HBox(10, verifyBtn, checkBtn, clearBtn, resetBtn, menuBtn);
         VBox layout = new VBox(10, traversalLabel, feedbackLabel, buttons, scrollPane);
         stage.setScene(new Scene(layout, 1200, 800));
         stage.show();
@@ -107,6 +111,16 @@ public class RandomTreeCreationGame {
 
     private void reset() {
         canvas.clearAllConnections();
-        feedbackLabel.setText("Build the tree that matches the traversals! Double click a node to select it as parent, then single click another to connect.");
+        feedbackLabel.setText("Double click a node to select as parent, single click another to connect.");
+    }
+
+    private void checkSoFar() {
+        BinaryTreeNode<String> userRoot = canvas.buildUserTree();
+        if (userRoot == null) {
+            feedbackLabel.setText("Please build a tree first!");
+            return;
+        }
+        canvas.highlightConnections(generator.getRoot());
+        feedbackLabel.setText("Green = correct connection, Red = wrong!");
     }
 }

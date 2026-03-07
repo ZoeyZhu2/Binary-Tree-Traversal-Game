@@ -9,6 +9,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import java.util.ArrayList;
 
+//This class creates the Nodes in the Tree Creation Game
 public class DraggableNode extends StackPane {
     private static final int RADIUS = 20;
     private String letter;
@@ -16,6 +17,14 @@ public class DraggableNode extends StackPane {
     private double mouseOffsetX, mouseOffsetY;
     private ArrayList<Line> connectedLines = new ArrayList<>();
     private ArrayList<Boolean> lineIsStart = new ArrayList<>(); // true = this node is the line's start point
+    private double originalX;
+    private double originalY;
+    private boolean inDrawingArea = false;
+    private double snapBoundary;
+    private boolean dragged = false;
+    private TreeCanvas canvas;
+
+
 
     private NodeSelectListener selectListener;
 
@@ -33,12 +42,15 @@ public class DraggableNode extends StackPane {
         getChildren().addAll(circle, text);
         setLayoutX(x - RADIUS);
         setLayoutY(y - RADIUS);
+        originalX = getLayoutX();
+        originalY = getLayoutY();
         setPrefSize(RADIUS * 2, RADIUS * 2);
         setMinSize(RADIUS * 2, RADIUS * 2);
         setMaxSize(RADIUS * 2, RADIUS * 2);
 
         // single click — notify canvas to connect
         setOnMouseClicked(e -> {
+            if (dragged) return; 
             if (e.getClickCount() == 2) {
                 // double click — select as parent
                 if (selectListener != null) selectListener.onDoubleClick(this);
@@ -51,12 +63,27 @@ public class DraggableNode extends StackPane {
         setOnMousePressed(e -> {
             mouseOffsetX = e.getSceneX() - getLayoutX();
             mouseOffsetY = e.getSceneY() - getLayoutY();
+            dragged = false;
+            e.consume();
         });
 
         setOnMouseDragged(e -> {
             setLayoutX(e.getSceneX() - mouseOffsetX);
             setLayoutY(e.getSceneY() - mouseOffsetY);
-            updateLines(); // move connected lines as node is dragged
+            updateLines();
+            dragged = true;
+            e.consume();
+        });
+
+        setOnMouseReleased(e -> {
+            if (dragged) {
+                if (getLayoutY() + RADIUS < snapBoundary) {
+                    if (canvas != null) canvas.removeNodeConnections(this);
+                    snapBack();
+                } else {
+                    setInDrawingArea(true);
+                }
+            }
         });
     }
 
@@ -104,4 +131,27 @@ public class DraggableNode extends StackPane {
     public Circle getCircle() { return circle; }
     public double getCenterX() { return getLayoutX() + RADIUS; }
     public double getCenterY() { return getLayoutY() + RADIUS; }
+    public void snapBack() {
+        setLayoutX(originalX);
+        setLayoutY(originalY);
+        inDrawingArea = false;
+    }
+
+    public void setInDrawingArea(boolean inDrawingArea) {
+        this.inDrawingArea = inDrawingArea;
+    }
+
+    public boolean isInDrawingArea() {
+        return inDrawingArea;
+    }
+
+    public double getOriginalX() { return originalX; }
+    public double getOriginalY() { return originalY; }
+    public void setSnapBoundary(double boundary) {
+        this.snapBoundary = boundary;
+    }
+
+    public void setCanvas(TreeCanvas canvas) {
+        this.canvas = canvas;
+    }
 }
