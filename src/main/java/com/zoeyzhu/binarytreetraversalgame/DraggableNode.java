@@ -16,7 +16,7 @@ public class DraggableNode extends StackPane {
     private Circle circle;
     private double mouseOffsetX, mouseOffsetY;
     private ArrayList<Line> connectedLines = new ArrayList<>();
-    private ArrayList<Boolean> lineIsStart = new ArrayList<>(); // true = this node is the line's start point
+    private ArrayList<Boolean> lineIsStart = new ArrayList<>();
     private double originalX;
     private double originalY;
     private boolean inDrawingArea = false;
@@ -24,8 +24,7 @@ public class DraggableNode extends StackPane {
     private boolean dragged = false;
     private TreeCanvas canvas;
 
-
-
+    private long lastClickTime = 0;
     private NodeSelectListener selectListener;
 
     public DraggableNode(String letter, double x, double y) {
@@ -48,15 +47,25 @@ public class DraggableNode extends StackPane {
         setMinSize(RADIUS * 2, RADIUS * 2);
         setMaxSize(RADIUS * 2, RADIUS * 2);
 
-        // single click — notify canvas to connect
+        // JPro-compatible click detection using timer instead of getClickCount()
         setOnMouseClicked(e -> {
-            if (dragged) return; 
-            if (e.getClickCount() == 2) {
-                // double click — select as parent
+            if (dragged) return;
+            long now = System.currentTimeMillis();
+            if (now - lastClickTime < 300) {
+                // double click detected
+                lastClickTime = 0;
                 if (selectListener != null) selectListener.onDoubleClick(this);
-            } else if (e.getClickCount() == 1) {
-                // single click — select as child
-                if (selectListener != null) selectListener.onSingleClick(this);
+            } else {
+                // possible single click — wait to confirm it's not a double click
+                lastClickTime = now;
+                new Thread(() -> {
+                    try { Thread.sleep(300); } catch (Exception ex) {}
+                    if (lastClickTime != 0 && System.currentTimeMillis() - lastClickTime >= 300) {
+                        javafx.application.Platform.runLater(() -> {
+                            if (selectListener != null) selectListener.onSingleClick(this);
+                        });
+                    }
+                }).start();
             }
         });
 
@@ -87,7 +96,6 @@ public class DraggableNode extends StackPane {
         });
     }
 
-    // update all connected lines to follow this node
     private void updateLines() {
         for (int i = 0; i < connectedLines.size(); i++) {
             Line line = connectedLines.get(i);
@@ -131,6 +139,7 @@ public class DraggableNode extends StackPane {
     public Circle getCircle() { return circle; }
     public double getCenterX() { return getLayoutX() + RADIUS; }
     public double getCenterY() { return getLayoutY() + RADIUS; }
+
     public void snapBack() {
         setLayoutX(originalX);
         setLayoutY(originalY);
@@ -141,17 +150,10 @@ public class DraggableNode extends StackPane {
         this.inDrawingArea = inDrawingArea;
     }
 
-    public boolean isInDrawingArea() {
-        return inDrawingArea;
-    }
-
+    public boolean isInDrawingArea() { return inDrawingArea; }
     public double getOriginalX() { return originalX; }
     public double getOriginalY() { return originalY; }
-    public void setSnapBoundary(double boundary) {
-        this.snapBoundary = boundary;
-    }
 
-    public void setCanvas(TreeCanvas canvas) {
-        this.canvas = canvas;
-    }
+    public void setSnapBoundary(double boundary) { this.snapBoundary = boundary; }
+    public void setCanvas(TreeCanvas canvas) { this.canvas = canvas; }
 }
