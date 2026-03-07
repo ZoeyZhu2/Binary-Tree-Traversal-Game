@@ -16,6 +16,7 @@ public class RandomTreeCreationGame {
     private TreeCanvas canvas;
     private Label feedbackLabel;
     private Label traversalLabel;
+    private String secondTraversal = "preorder";
 
     public RandomTreeCreationGame(Stage stage) {
         this.stage = stage;
@@ -25,19 +26,18 @@ public class RandomTreeCreationGame {
     private void startGame() {
         generator = new RandomBinaryTreeGenerator();
 
-        BinaryTreeTraversalLogic<String> preorder = new BinaryTreeTraversalLogic<>(generator.getRoot(), "preorder");
         BinaryTreeTraversalLogic<String> inorder = new BinaryTreeTraversalLogic<>(generator.getRoot(), "inorder");
+        BinaryTreeTraversalLogic<String> second = new BinaryTreeTraversalLogic<>(generator.getRoot(), secondTraversal);
 
         traversalLabel = new Label(
-            "Preorder: " + preorder.getOrderString() +
-            "\nInorder: " + inorder.getOrderString()
+            "Inorder: " + inorder.getOrderString() +
+            "\n" + secondTraversal.substring(0,1).toUpperCase() + secondTraversal.substring(1) + ": " + second.getOrderString()
         );
 
         ArrayList<DraggableNode> draggableNodes = new ArrayList<>();
         ArrayList<String> letters = getLetters(generator.getRoot());
         java.util.Collections.sort(letters);
 
-        // arrange in a grid at the TOP of the canvas
         int cols = 13;
         int spacingX = 70;
         int spacingY = 70;
@@ -49,11 +49,11 @@ public class RandomTreeCreationGame {
         }
 
         canvas = new TreeCanvas(draggableNodes);
-        canvas.setPrefSize(1200, 1200); // tall canvas so there's room to build below
+        canvas.setPrefSize(1200, 1200);
 
         javafx.scene.control.ScrollPane scrollPane = new javafx.scene.control.ScrollPane(canvas);
-        scrollPane.setPrefSize(1200, 650);
-        scrollPane.setPannable(true); // lets user pan by holding scroll
+        scrollPane.setPrefSize(1200, 550);
+        scrollPane.setPannable(true);
 
         feedbackLabel = new Label("Double click a node to select as parent, single click another to connect.");
 
@@ -61,17 +61,33 @@ public class RandomTreeCreationGame {
         Button clearBtn = new Button("Clear");
         Button resetBtn = new Button("New Game");
         Button checkBtn = new Button("Check So Far");
+        Button menuBtn = new Button("Main Menu");
 
         verifyBtn.setOnAction(e -> verify());
         clearBtn.setOnAction(e -> reset());
         resetBtn.setOnAction(e -> startGame());
         checkBtn.setOnAction(e -> checkSoFar());
-
-        Button menuBtn = new Button("Main Menu");
         menuBtn.setOnAction(e -> new Main().start(stage));
 
+        // traversal toggle buttons
+        Button preorderBtn = new Button("Inorder + Preorder");
+        Button postorderBtn = new Button("Inorder + Postorder");
+
+        preorderBtn.setOnAction(e -> { secondTraversal = "preorder"; startGame(); });
+        postorderBtn.setOnAction(e -> { secondTraversal = "postorder"; startGame(); });
+
+        // highlight active toggle
+        if (secondTraversal.equals("preorder")) {
+            preorderBtn.setStyle("-fx-background-color: lightblue;");
+            postorderBtn.setStyle("");
+        } else {
+            postorderBtn.setStyle("-fx-background-color: lightblue;");
+            preorderBtn.setStyle("");
+        }
+
+        HBox toggles = new HBox(10, new Label("Mode:"), preorderBtn, postorderBtn);
         HBox buttons = new HBox(10, verifyBtn, checkBtn, clearBtn, resetBtn, menuBtn);
-        VBox layout = new VBox(10, traversalLabel, feedbackLabel, buttons, scrollPane);
+        VBox layout = new VBox(10, toggles, traversalLabel, feedbackLabel, buttons, scrollPane);
         stage.setScene(new Scene(layout, 1200, 800));
         stage.show();
     }
@@ -83,14 +99,14 @@ public class RandomTreeCreationGame {
             return;
         }
 
-        BinaryTreeTraversalLogic<String> userPreorder = new BinaryTreeTraversalLogic<>(userRoot, "preorder");
         BinaryTreeTraversalLogic<String> userInorder = new BinaryTreeTraversalLogic<>(userRoot, "inorder");
+        BinaryTreeTraversalLogic<String> userSecond = new BinaryTreeTraversalLogic<>(userRoot, secondTraversal);
 
-        BinaryTreeTraversalLogic<String> answerPreorder = new BinaryTreeTraversalLogic<>(generator.getRoot(), "preorder");
         BinaryTreeTraversalLogic<String> answerInorder = new BinaryTreeTraversalLogic<>(generator.getRoot(), "inorder");
+        BinaryTreeTraversalLogic<String> answerSecond = new BinaryTreeTraversalLogic<>(generator.getRoot(), secondTraversal);
 
-        boolean correct = userPreorder.getOrderString().equals(answerPreorder.getOrderString())
-                    && userInorder.getOrderString().equals(answerInorder.getOrderString());
+        boolean correct = userInorder.getOrderString().equals(answerInorder.getOrderString())
+                    && userSecond.getOrderString().equals(answerSecond.getOrderString());
 
         feedbackLabel.setText(correct ? "Correct! 🎉" : "Not quite, keep trying!");
     }
