@@ -1,0 +1,5 @@
+Next to do:
+AVL Tree visualizer
+show height of null node as -1
+show double rotation separately for zigzags and zagzigs
+use usfca website as example
