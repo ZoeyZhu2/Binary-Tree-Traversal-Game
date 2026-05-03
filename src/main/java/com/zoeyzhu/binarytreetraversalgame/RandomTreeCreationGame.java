@@ -3,9 +3,12 @@ package com.zoeyzhu.binarytreetraversalgame;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Dialog;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.Modality;
+import javafx.geometry.Pos;
 import java.util.ArrayList;
 
 //This class is where all the elements in the Random Tree Creation Game are brought together
@@ -15,10 +18,7 @@ public class RandomTreeCreationGame {
     private TreeCanvas canvas;
     private Label feedbackLabel;
     private Label traversalLabel;
-    private Label connectionLabel;
     private String secondTraversal = "preorder";
-    private Button leftChildBtn;
-    private Button rightChildBtn;
 
     public RandomTreeCreationGame(Stage stage) {
         this.stage = stage;
@@ -53,34 +53,10 @@ public class RandomTreeCreationGame {
         canvas = new TreeCanvas(draggableNodes);
         canvas.setPrefSize(1200, 1200);
 
-        // inline left/right buttons — replaces the Alert dialog
-        connectionLabel = new Label("");
-        leftChildBtn = new Button("Left Child");
-        rightChildBtn = new Button("Right Child");
-        leftChildBtn.setVisible(false);
-        rightChildBtn.setVisible(false);
-        connectionLabel.setVisible(false);
-
-        leftChildBtn.setOnAction(e -> {
-            canvas.connectSelected(true);
-            hideConnectionButtons();
-        });
-
-        rightChildBtn.setOnAction(e -> {
-            canvas.connectSelected(false);
-            hideConnectionButtons();
-        });
-
-        // show left/right buttons when a parent is selected and child is pending
+        // show popup dialog when parent is selected and child is pending
         canvas.setOnParentSelected(selectedParent -> {
             if (selectedParent != null && canvas.getPendingChild() != null) {
-                connectionLabel.setText("Connect " + canvas.getPendingChild().getLetter() +
-                    " as child of " + selectedParent.getLetter() + ":");
-                connectionLabel.setVisible(true);
-                leftChildBtn.setVisible(true);
-                rightChildBtn.setVisible(true);
-            } else {
-                hideConnectionButtons();
+                showConnectionPopup(selectedParent, canvas.getPendingChild());
             }
         });
 
@@ -118,17 +94,50 @@ public class RandomTreeCreationGame {
 
         HBox toggles = new HBox(10, new Label("Mode:"), preorderBtn, postorderBtn);
         HBox buttons = new HBox(10, verifyBtn, checkBtn, clearBtn, resetBtn, menuBtn);
-        HBox connectionRow = new HBox(10, connectionLabel, leftChildBtn, rightChildBtn);
 
-        VBox layout = new VBox(10, toggles, traversalLabel, feedbackLabel, connectionRow, buttons, scrollPane);
+        VBox layout = new VBox(10, toggles, traversalLabel, feedbackLabel, buttons, scrollPane);
         stage.setScene(new Scene(layout, 1200, 800));
         stage.show();
     }
 
-    private void hideConnectionButtons() {
-        leftChildBtn.setVisible(false);
-        rightChildBtn.setVisible(false);
-        connectionLabel.setVisible(false);
+    private void reset() {
+        canvas.clearAllConnections();
+        //should I snap all nodes back?
+        feedbackLabel.setText("Double click a node to select as parent, single click another to connect.");
+    }
+
+    private void showConnectionPopup(DraggableNode parent, DraggableNode child) {
+        javafx.stage.Stage popupStage = new javafx.stage.Stage();
+        popupStage.initModality(Modality.APPLICATION_MODAL);
+        popupStage.initOwner(stage);
+        popupStage.setTitle("Select Position");
+        
+        Label message = new Label("Connect " + child.getLetter() + " as child of " + parent.getLetter() + ":");
+        Button leftBtn = new Button("Left Child");
+        Button rightBtn = new Button("Right Child");
+        
+        leftBtn.setStyle("-fx-padding: 10; -fx-font-size: 12;");
+        rightBtn.setStyle("-fx-padding: 10; -fx-font-size: 12;");
+        
+        leftBtn.setOnAction(e -> {
+            canvas.connectSelected(true);
+            popupStage.close();
+        });
+        
+        rightBtn.setOnAction(e -> {
+            canvas.connectSelected(false);
+            popupStage.close();
+        });
+        
+        HBox buttonBox = new HBox(10, leftBtn, rightBtn);
+        buttonBox.setAlignment(Pos.CENTER);
+        VBox content = new VBox(15, message, buttonBox);
+        content.setAlignment(Pos.CENTER);
+        content.setStyle("-fx-padding: 20;");
+        
+        Scene popupScene = new Scene(content, 350, 150);
+        popupStage.setScene(popupScene);
+        popupStage.show();
     }
 
     private void verify() {
@@ -161,12 +170,6 @@ public class RandomTreeCreationGame {
         letters.add(node.getData());
         collectLetters(node.getLeft(), letters);
         collectLetters(node.getRight(), letters);
-    }
-
-    private void reset() {
-        canvas.clearAllConnections();
-        hideConnectionButtons();
-        feedbackLabel.setText("Double click a node to select as parent, single click another to connect.");
     }
 
     private void checkSoFar() {
